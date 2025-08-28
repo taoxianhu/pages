@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kindle备忘录 - 使用指南</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-text-size-adjust: none;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #F7F5E8;
+            color: #000;
+            line-height: 1.4;
+            padding: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 15px 0;
+            border-bottom: 2px solid #333;
+            margin-bottom: 15px;
+        }
+        
+        .date-display {
+            font-size: 1.4em;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .clock {
+            font-size: 2.2em;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .calendar-section, .memo-section, .instructions {
+            border: 1px solid #333;
+            background-color: #FFF;
+            padding: 12px;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 12px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+        
+        .calendar {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .calendar th {
+            background-color: #EEE;
+            font-weight: bold;
+            padding: 5px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+        
+        .calendar td {
+            border: 1px solid #333;
+            text-align: center;
+            padding: 5px;
+            height: 30px;
+        }
+        
+        .current-day {
+            background-color: #333;
+            color: #FFF;
+        }
+        
+        .memo-input {
+            width: 100%;
+            height: 100px;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #333;
+            font-family: Arial, sans-serif;
+            resize: none;
+            background-color: #FFF;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            padding: 8px 15px;
+            background-color: #EEE;
+            border: 1px solid #333;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        button:active {
+            background-color: #DDD;
+        }
+        
+        .memo-list {
+            border-top: 1px solid #333;
+            padding-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .memo-item {
+            padding: 8px;
+            border-bottom: 1px dashed #999;
+        }
+        
+        .memo-date {
+            font-size: 0.8em;
+            color: #555;
+            margin-bottom: 3px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #333;
+            font-size: 0.8em;
+            color: #666;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .step-number {
+            background-color: #333;
+            color: white;
+            width: 24px;
+            height: 24px;
+            display: inline-block;
+            text-align: center;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                font-size: 14px;
+            }
+            
+            .clock {
+                font-size: 1.8em;
+            }
+            
+            .calendar td, .calendar th {
+                padding: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="date-display" id="dateDisplay">2023年11月15日 星期三</div>
+        <div class="clock" id="clock">00:00:00</div>
+    </div>
+    
+    <div class="container">
+        <div class="instructions">
+            <h2>使用说明</h2>
+            <ul>
+                <li><span class="step-number">1</span>使用USB数据线将Kindle连接到电脑</li>
+                <li><span class="step-number">2</span>在电脑上将此HTML文件保存到Kindle的documents文件夹</li>
+                <li><span class="step-number">3</span>安全断开Kindle与电脑的连接</li>
+                <li><span class="step-number">4</span>在Kindle主页找到此文件并打开</li>
+                <li><span class="step-number">5</span>如果无法直接打开，请尝试：主页 → 菜单 → 体验浏览器 → 输入文件路径</li>
+            </ul>
+            <p><strong>文件路径示例:</strong> file:///mnt/us/documents/kindle_memo.html</p>
+        </div>
+        
+        <div class="calendar-section">
+            <h2>日历</h2>
+            <table class="calendar" id="calendar">
+                <thead>
+                    <tr>
+                        <th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th>
+                    </tr>
+                </thead>
+                <tbody id="calendar-body">
+                    <!-- 日历内容将通过JavaScript生成 -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="memo-section">
+            <h2>备忘录</h2>
+            <textarea class="memo-input" id="memoInput" placeholder="输入您的备忘录内容..."></textarea>
+            <div class="buttons">
+                <button id="saveBtn">保存</button>
+                <button id="clearBtn">清空</button>
+            </div>
+            <div class="memo-list" id="memoList">
+                <!-- 保存的备忘录将显示在这里 -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        Kindle 备忘录 - 专为版本 5.18.1 优化 | 使用Kindle实验浏览器查看
+    </div>
+
+    <script>
+        // 更新时钟和日期显示
+        function updateClock() {
+            var now = new Date();
+            var timeStr = now.toLocaleTimeString('zh-CN');
+            var dateStr = now.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            });
+            
+            document.getElementById('clock').textContent = timeStr;
+            document.getElementById('dateDisplay').textContent = dateStr;
+        }
+        
+        // 初始化时钟
+        updateClock();
+        setInterval(updateClock, 1000);
+        
+        // 生成日历
+        function generateCalendar() {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = now.getMonth();
+            var firstDay = new Date(year, month, 1);
+            var lastDay = new Date(year, month + 1, 0);
+            var startDay = firstDay.getDay();
+            var daysInMonth = lastDay.getDate();
+            
+            var calendarBody = document.getElementById('calendar-body');
+            calendarBody.innerHTML = '';
+            
+            var date = 1;
+            for (var i = 0; i < 6; i++) {
+                var row = document.createElement('tr');
+                
+                for (var j = 0; j < 7; j++) {
+                    var cell = document.createElement('td');
+                    
+                    if (i === 0 && j < startDay) {
+                        cell.textContent = '';
+                    } else if (date > daysInMonth) {
+                        break;
+                    } else {
+                        cell.textContent = date;
+                        if (date === now.getDate()) {
+                            cell.className = 'current-day';
+                        }
+                        date++;
+                    }
+                    
+                    row.appendChild(cell);
+                }
+                
+                calendarBody.appendChild(row);
+            }
+        }
+        
+        // 初始化日历
+        generateCalendar();
+        
+        // 备忘录功能
+        var memoInput = document.getElementById('memoInput');
+        var memoList = document.getElementById('memoList');
+        var saveBtn = document.getElementById('saveBtn');
+        var clearBtn = document.getElementById('clearBtn');
+        
+        // 加载保存的备忘录
+        function loadMemos() {
+            var memos = JSON.parse(localStorage.getItem('kindleMemos') || '[]');
+            memoList.innerHTML = '';
+            
+            for (var i = 0; i < memos.length; i++) {
+                var memoItem = document.createElement('div');
+                memoItem.className = 'memo-item';
+                
+                var memoDate = document.createElement('div');
+                memoDate.className = 'memo-date';
+                memoDate.textContent = memos[i].date;
+                
+                var memoText = document.createElement('div');
+                memoText.textContent = memos[i].text;
+                
+                var deleteBtn = document.createElement('button');
+                deleteBtn.textContent = '删除';
+                deleteBtn.onclick = (function(index) {
+                    return function() {
+                        deleteMemo(index);
+                    };
+                })(i);
+                
+                memoItem.appendChild(memoDate);
+                memoItem.appendChild(memoText);
+                memoItem.appendChild(deleteBtn);
+                
+                memoList.appendChild(memoItem);
+            }
+        }
+        
+        // 保存备忘录
+        saveBtn.onclick = function() {
+            var memoText = memoInput.value.trim();
+            if (memoText) {
+                var memos = JSON.parse(localStorage.getItem('kindleMemos') || '[]');
+                var now = new Date();
+                var dateStr = now.toLocaleString('zh-CN');
+                
+                memos.push({
+                    text: memoText,
+                    date: dateStr
+                });
+                
+                localStorage.setItem('kindleMemos', JSON.stringify(memos));
+                memoInput.value = '';
+                loadMemos();
+            }
+        };
+        
+        // 清空内容
+        clearBtn.onclick = function() {
+            memoInput.value = '';
+        };
+        
+        // 删除备忘录
+        function deleteMemo(index) {
+            var memos = JSON.parse(localStorage.getItem('kindleMemos') || '[]');
+            memos.splice(index, 1);
+            localStorage.setItem('kindleMemos', JSON.stringify(memos));
+            loadMemos();
+        }
+        
+        // 初始化加载备忘录
+        loadMemos();
+    </script>
+</body>
+</html>
